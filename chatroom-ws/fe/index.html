@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Simple Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <input id="name" placeholder="Your nickname" />
+        <div
+            id="chat"
+            style="border: 1px solid #ccc; height: 200px; overflow: auto"
+        ></div>
+        <input id="msg" placeholder="Type a message" />
+        <button id="send">Send</button>
+
+        <script>
+            const chat = document.getElementById("chat");
+            const msgInput = document.getElementById("msg");
+            const nameInput = document.getElementById("name");
+
+            const ws = new WebSocket("ws://localhost:8080/ws");
+
+            ws.onmessage = (event) => {
+                const p = document.createElement("p");
+                p.textContent = event.data;
+                chat.appendChild(p);
+                chat.scrollTop = chat.scrollHeight;
+            };
+
+            document.getElementById("send").onclick = () => {
+                const nickname = nameInput.value || "Anon";
+                const message = msgInput.value;
+                if (message) {
+                    ws.send(`${nickname}: ${message}`);
+                    msgInput.value = "";
+                }
+            };
+        </script>
+    </body>
+</html>
